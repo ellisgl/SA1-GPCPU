@@ -1,0 +1,13 @@
+# Verilator build artifacts
+tb/obj_dir/
+
+# iverilog artifacts
+*.vvp
+*.vcd
+
+# Gowin EDA build artifacts
+impl/pnr/
+impl/gwsynthesis/
+impl/temp/
+*.fs
+*.bin
