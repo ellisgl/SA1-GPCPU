@@ -6,8 +6,7 @@ tb/obj_dir/
 *.vcd
 
 # Gowin EDA build artifacts
-impl/pnr/
-impl/gwsynthesis/
-impl/temp/
+impl/
+*.gprj.user
 *.fs
 *.bin

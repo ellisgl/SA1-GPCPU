@@ -12,27 +12,18 @@ module timer (
 
     // Register interface
     input  wire        reg_wr_en,
-    input  wire        reg_rd_en,   // Active read strobe
+    input  wire        reg_rd_en,
     input  wire [3:0]  reg_addr,
     input  wire [7:0]  reg_wr_data,
     output reg  [7:0]  reg_rd_data
 );
 
-    // Timer 0
-    reg [15:0] timer0_reload;
-    reg [15:0] timer0_count;
-    reg        timer0_enable;
-    reg        timer0_irq_en;
-    reg        timer0_fired;
+    reg [15:0] timer0_reload, timer0_count;
+    reg        timer0_enable, timer0_irq_en, timer0_fired;
 
-    // Timer 1
-    reg [15:0] timer1_reload;
-    reg [15:0] timer1_count;
-    reg        timer1_enable;
-    reg        timer1_irq_en;
-    reg        timer1_fired;
+    reg [15:0] timer1_reload, timer1_count;
+    reg        timer1_enable, timer1_irq_en, timer1_fired;
 
-    // Prescaler
     reg [7:0]  prescaler_val;
     reg [7:0]  prescaler_count;
     wire       prescaler_tick = (prescaler_count == 8'd0);
@@ -44,15 +35,19 @@ module timer (
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             prescaler_count <= 8'd0;
+            prescaler_val   <= 8'd0;
         end else begin
             if (prescaler_count == 8'd0)
                 prescaler_count <= prescaler_val;
             else
                 prescaler_count <= prescaler_count - 8'd1;
+
+            if (reg_wr_en && reg_addr == 4'd1)
+                prescaler_val <= reg_wr_data;
         end
     end
 
-    // Timer 0
+    // Timer 0 + register writes for timer 0
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             timer0_count  <= 16'd0;
@@ -69,13 +64,28 @@ module timer (
                     timer0_count <= timer0_count - 16'd1;
                 end
             end
-            // Clear fired flag on explicit status read
+
             if (reg_rd_en && reg_addr == 4'd0)
                 timer0_fired <= 1'b0;
+
+            if (reg_wr_en) begin
+                case (reg_addr)
+                    4'd0: begin
+                        timer0_enable <= reg_wr_data[0];
+                        timer0_irq_en <= reg_wr_data[4];
+                    end
+                    4'd2: timer0_reload[7:0] <= reg_wr_data;
+                    4'd3: begin
+                        timer0_reload[15:8] <= reg_wr_data;
+                        timer0_count <= {reg_wr_data, timer0_reload[7:0]};
+                    end
+                    default: ;
+                endcase
+            end
         end
     end
 
-    // Timer 1
+    // Timer 1 + register writes for timer 1
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             timer1_count  <= 16'd0;
@@ -92,36 +102,24 @@ module timer (
                     timer1_count <= timer1_count - 16'd1;
                 end
             end
+
             if (reg_rd_en && reg_addr == 4'd0)
                 timer1_fired <= 1'b0;
-        end
-    end
 
-    // Register writes
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            prescaler_val <= 8'd0;
-        end else if (reg_wr_en) begin
-            case (reg_addr)
-                4'd0: begin
-                    timer0_enable <= reg_wr_data[0];
-                    timer1_enable <= reg_wr_data[1];
-                    timer0_irq_en <= reg_wr_data[4];
-                    timer1_irq_en <= reg_wr_data[5];
-                end
-                4'd1: prescaler_val <= reg_wr_data;
-                4'd2: timer0_reload[7:0]  <= reg_wr_data;
-                4'd3: begin
-                    timer0_reload[15:8] <= reg_wr_data;
-                    timer0_count <= {reg_wr_data, timer0_reload[7:0]};
-                end
-                4'd4: timer1_reload[7:0]  <= reg_wr_data;
-                4'd5: begin
-                    timer1_reload[15:8] <= reg_wr_data;
-                    timer1_count <= {reg_wr_data, timer1_reload[7:0]};
-                end
-                default: ;
-            endcase
+            if (reg_wr_en) begin
+                case (reg_addr)
+                    4'd0: begin
+                        timer1_enable <= reg_wr_data[1];
+                        timer1_irq_en <= reg_wr_data[5];
+                    end
+                    4'd4: timer1_reload[7:0] <= reg_wr_data;
+                    4'd5: begin
+                        timer1_reload[15:8] <= reg_wr_data;
+                        timer1_count <= {reg_wr_data, timer1_reload[7:0]};
+                    end
+                    default: ;
+                endcase
+            end
         end
     end
 

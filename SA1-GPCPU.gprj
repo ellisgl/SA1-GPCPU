@@ -3,20 +3,20 @@
 <Project>
     <Template>FPGA</Template>
     <Version>5</Version>
-    <Device name="" pn="">gw5ast138b-007</Device>
+    <Device name="GW5AST-138B" pn="GW5AST-LV138FPG676AC1/I0">gw5ast138b-007</Device>
     <FileList>
-        <File path="src/cpu_defines.vh" type="file-verilog-header"/>
-        <File path="src/register_file.v" type="file-verilog"/>
-        <File path="src/alu.v" type="file-verilog"/>
-        <File path="src/math_unit.v" type="file-verilog"/>
-        <File path="src/control_unit.v" type="file-verilog"/>
-        <File path="src/address_gen.v" type="file-verilog"/>
-        <File path="src/cpu_core.v" type="file-verilog"/>
-        <File path="src/interrupt_ctrl.v" type="file-verilog"/>
-        <File path="src/dma_controller.v" type="file-verilog"/>
-        <File path="src/timer.v" type="file-verilog"/>
-        <File path="src/varlen_bitproc.v" type="file-verilog"/>
-        <File path="src/bus_arbiter.v" type="file-verilog"/>
-        <File path="src/sa1_gpcpu_top.v" type="file-verilog"/>
+        <File path="src/cpu_defines.vh" type="file.verilog" enable="1"/>
+        <File path="src/register_file.v" type="file.verilog" enable="1"/>
+        <File path="src/alu.v" type="file.verilog" enable="1"/>
+        <File path="src/math_unit.v" type="file.verilog" enable="1"/>
+        <File path="src/control_unit.v" type="file.verilog" enable="1"/>
+        <File path="src/address_gen.v" type="file.verilog" enable="1"/>
+        <File path="src/cpu_core.v" type="file.verilog" enable="1"/>
+        <File path="src/interrupt_ctrl.v" type="file.verilog" enable="1"/>
+        <File path="src/dma_controller.v" type="file.verilog" enable="1"/>
+        <File path="src/timer.v" type="file.verilog" enable="1"/>
+        <File path="src/varlen_bitproc.v" type="file.verilog" enable="1"/>
+        <File path="src/bus_arbiter.v" type="file.verilog" enable="1"/>
+        <File path="src/sa1_gpcpu_top.v" type="file.verilog" enable="1"/>
     </FileList>
 </Project>
